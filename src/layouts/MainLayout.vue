@@ -16,7 +16,7 @@
     <q-footer elevated class="bg-grey-8 text-white text-center">
       <q-toolbar>
         <q-toolbar-title>
-          <div>Prueba técnica Santiago Correa Aguirre &copy; {{ new Date().getFullYear() }}</div>
+          <div><span class="desktop-only">Prueba técnica</span> Santiago Correa<span class="desktop-only"> Aguirre</span> &copy; {{ new Date().getFullYear() }}</div>
         </q-toolbar-title>
       </q-toolbar>
     </q-footer>

@@ -1,5 +1,5 @@
 # PRUEBA TÉCNICA CIDENET
-Esta es una prueba técnica propuesta por la empresa Cidenet.
+Esta es una prueba técnica propuesta por la empresa Cidenet, desarrollada por [Santiago Correa Aguirre](https://github.com/Santiago1010 "Santiago Correa Aguirre"), utilizando [Vue 3](https://vuejs.org/ "Vue 3"), [Quasar](https://quasar.dev/ "Quasar"), [Pinia](https://pinia.vuejs.org/ "Pinia"), [Vue Router](https://router.vuejs.org/ "Vue Router"), entre otros.
 
 ## Instalación
 A continuación, se mostrará un paso a paso de la instalación de la prueba técnica:
