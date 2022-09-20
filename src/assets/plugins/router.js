@@ -5,6 +5,7 @@ import MainLayout from '../../layouts/MainLayout.vue'
 //import SessionLayout from '../../layouts/SessionLayout.vue'
 
 import Index from '../../pages/Index.vue'
+import Inicio from '../../pages/Inicio.vue'
 
 //import NotPermissions from '../../pages/NotPermissions.vue'
 import NotFound from '../../pages/NotFound.vue'
@@ -18,6 +19,17 @@ const routes = [
 				path: '/',
 				component: Index
 			},
+			{
+				path: '/inicio',
+				component: Inicio,
+				beforeEnter: (to, from, next) => {
+					if (sessionStorage.token !== undefined && sessionStorage.username !== undefined) {
+						next()
+					}else {
+						next(from.path)
+					}
+				}
+			}
 		]
 	},
 	{

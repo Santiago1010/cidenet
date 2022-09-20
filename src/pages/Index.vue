@@ -47,6 +47,8 @@
 
 	const seePassword = ref(false)
 
+	sessionStorage.clear()
+
 	const login = () => {
 		if (username.value !== null && password.value !== null) {
 			if (usersStore.verifyLogin(username.value, crypto.SHA256(password.value).toString())) {
