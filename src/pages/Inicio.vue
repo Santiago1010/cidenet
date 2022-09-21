@@ -55,66 +55,148 @@
 			<q-tr>
 				<q-td @click="openOptions(props.row.id)" key="id" :props="props">
 					{{ props.row.id }}
-					<q-tooltip>Haz click para editar este producto: {{ props.row.product_name }}.</q-tooltip>
+					<q-tooltip>Haz click para editar este producto: {{ props.row.serial }}.</q-tooltip>
 				</q-td>
 
-				<q-td @click="openOptions(props.row.id)" key="product_name" :props="props">
-					{{ props.row.product_name }}
-					<q-tooltip>Haz click para editar este producto: {{ props.row.product_name }}.</q-tooltip>
+				<q-td @click="openOptions(props.row.id)" key="serial" :props="props">
+					{{ props.row.serial }}
+					<q-tooltip>Haz click para editar este producto: {{ props.row.serial }}.</q-tooltip>
 				</q-td>
 
-				<q-td @click="openOptions(props.row.id)" key="measure" :props="props">
-					{{ props.row.measure }}
-					<q-tooltip>Haz click para editar este producto: {{ props.row.product_name }}.</q-tooltip>
+				<q-td @click="openOptions(props.row.id)" key="owner" :props="props">
+					{{ props.row.owner }}
+					<q-tooltip>Haz click para editar este producto: {{ props.row.serial }}.</q-tooltip>
 				</q-td>
 
-				<q-td @click="openOptions(props.row.id)" key="creation_date" :props="props">
-					{{ props.row.creation_date }}
-					<q-tooltip>Haz click para editar este producto: {{ props.row.product_name }}.</q-tooltip>
+				<q-td @click="openOptions(props.row.id)" key="connection_type" :props="props">
+					{{ props.row.connection_type }}
+					<q-tooltip>Haz click para editar este producto: {{ props.row.serial }}.</q-tooltip>
+				</q-td>
+
+				<q-td @click="openOptions(props.row.id)" key="location" :props="props">
+					{{ props.row.location }}
+					<q-tooltip>Haz click para editar este producto: {{ props.row.serial }}.</q-tooltip>
+				</q-td>
+
+				<q-td @click="openOptions(props.row.id)" key="created_at" :props="props">
+					{{ props.row.created_at }}
+					<q-tooltip>Haz click para editar este producto: {{ props.row.serial }}.</q-tooltip>
 				</q-td>
 
 				<q-td key="actions" :props="props" style="display: block;" class="desktop-only">
 					<q-btn color="info" label="editar" icon-right="edit" class="q-mx-xs" @click="openEdit(props.row.id)">
-						<q-tooltip>Haz click para editar este producto: {{ props.row.product_name }}.</q-tooltip>
+						<q-tooltip>Haz click para editar este producto: {{ props.row.serial }}.</q-tooltip>
 					</q-btn>
 
 					<q-btn color="negative" label="eliminar" icon-right="delete" class="q-mx-xs" @click="openDelete(props.row.id)">
-						<q-tooltip>Haz click para eliminar este producto: {{ props.row.product_name }}.</q-tooltip>
+						<q-tooltip>Haz click para eliminar este producto: {{ props.row.serial }}.</q-tooltip>
 					</q-btn>
 				</q-td>
 
 				<q-td key="actions" :props="props" class="mobile-only">
 					<q-btn color="info" label="editar" icon-right="edit" class="q-mx-xs q-my-xs btn-large" style="display: block; position: relative;" @click="openEdit(props.row.id)">
-						<q-tooltip>Haz click para editar este producto: {{ props.row.product_name }}.</q-tooltip>
+						<q-tooltip>Haz click para editar este producto: {{ props.row.serial }}.</q-tooltip>
 					</q-btn>
 
 					<q-btn color="negative" label="eliminar" icon-right="delete" class="q-mx-xs q-my-xs btn-large" style="display: block; position: relative;" @click="openDelete(props.row.id)">
-						<q-tooltip>Haz click para eliminar este producto: {{ props.row.product_name }}.</q-tooltip>
+						<q-tooltip>Haz click para eliminar este producto: {{ props.row.serial }}.</q-tooltip>
 					</q-btn>
 				</q-td>
 			</q-tr>
-		</template>
+		</template> 
 	</q-table>
 
 	<q-dialog v-model="form">
 		<q-card style="min-width: 90%;">
-			<q-card-section>
-				<div class="text-uppercase">{{ action }} producto</div>
+			<q-card-section class="text-center">
+				<div class="text-uppercase text-h2">{{ action }} producto</div>
 			</q-card-section>
 
 			<q-form>
-				<q-card-section>
-					<q-input outlined v-model="productsData.product_name" label="Nombre del producto" class="q-my-md">
-						<q-tooltip>Nombre del producto.</q-tooltip>
-					</q-input>
+				<q-card-section class="row">
+					<div class="col-12 col-sm-3 q-px-sm">
+						<q-input outlined type="number" v-model="productsData.serial" label="Serial del producto" class="q-my-md">
+							<q-tooltip>Serial del producto.</q-tooltip>
+						</q-input>
+					</div>
 
-					<q-select outlined v-model="productsData.measure" :options="measures" label="Tipo de medida" class="q-my-md">
-						<q-tooltip>Tipo de medida.</q-tooltip>
-					</q-select>
+					<div class="col-12 col-sm-3 q-px-sm">
+						<q-select outlined v-model="productsData.connection_type" :options="connectionTypes" label="Tipo de conexión" class="q-my-md">
+							<q-tooltip>Tipo de conexión.</q-tooltip>
+						</q-select>
+					</div>
 
-					<q-input outlined v-model="productsData.creation_date" label="Fecha de creación" class="q-my-md" readonly>
-						<q-tooltip>Fecha de creación del producto.</q-tooltip>
-					</q-input>
+					<div class="col-12 col-sm-3 q-px-sm">
+						<q-select outlined v-model="productsData.storage_system" :options="storageSystems" label="Sistema de almacenamiento" class="q-my-md">
+							<q-tooltip>Sistema de almacenamiento.</q-tooltip>
+						</q-select>
+					</div>
+
+					<div class="col-12 col-sm-3 q-px-sm">
+						<q-select outlined v-model="productsData.condition" :options="conditions" label="Condición" class="q-my-md">
+							<q-tooltip>Condición.</q-tooltip>
+						</q-select>
+					</div>
+
+					<div class="col-12 col-md-3 q-px-sm">
+						<q-select outlined v-model="productsData.owner" :options="['RF', 'OR']" label="Dueño" class="q-my-md">
+							<q-tooltip>Dueño.</q-tooltip>
+						</q-select>
+					</div>
+
+					<div class="col-12 col-md-3 q-px-sm">
+						<q-input outlined v-model="productsData.location" label="Ubicación" class="q-my-md">
+							<q-tooltip>Ubicación.</q-tooltip>
+						</q-input>
+					</div>
+
+					<div class="col-12 col-md-3 q-px-sm">
+						<q-select outlined v-model="productsData.manufacturer" :options="yesNot" label="Fabricante" class="q-my-md">
+							<q-tooltip>Fabricante.</q-tooltip>
+						</q-select>
+					</div>
+
+					<div class="col-12 col-md-3 q-px-sm">
+						<q-input outlined v-model="productsData.purchase" label="Fecha y hora de compra" class="q-my-md">
+							<q-tooltip>Fecha y hora de compra.</q-tooltip>
+						</q-input>
+					</div>
+
+					<div class="col-12 col-sm-3 q-px-sm">
+						<q-input outlined type="number" v-model="productsData.i_max" label="i_max" class="q-my-md">
+							<q-tooltip>i_max.</q-tooltip>
+						</q-input>
+					</div>
+
+					<div class="col-12 col-sm-3 q-px-sm">
+						<q-input outlined type="number" v-model="productsData.i_b" label="i_b" class="q-my-md">
+							<q-tooltip>i_b.</q-tooltip>
+						</q-input>
+					</div>
+
+					<div class="col-12 col-sm-3 q-px-sm">
+						<q-input outlined type="number" v-model="productsData.i_n" label="i_n" class="q-my-md">
+							<q-tooltip>i_n.</q-tooltip>
+						</q-input>
+					</div>
+
+					<div class="col-12 col-sm-3 q-px-sm">
+						<q-input outlined type="number" v-model="productsData.seals" label="seals" class="q-my-md">
+							<q-tooltip>seals.</q-tooltip>
+						</q-input>
+					</div>
+
+					<div class="col-12 col-sm-6 q-px-sm">
+						<q-input outlined v-model="productsData.created_at" label="Fecha de creación" class="q-my-md" readonly>
+							<q-tooltip>Fecha de creación.</q-tooltip>
+						</q-input>
+					</div>
+
+					<div class="col-12 col-sm-6 q-px-sm">
+						<q-input outlined v-model="productsData.updated_at" label="Fecha de última modificación" class="q-my-md" readonly>
+							<q-tooltip>Última modificación</q-tooltip>
+						</q-input>
+					</div>
 				</q-card-section>
 
 				<q-card-actions vertical>
@@ -172,8 +254,10 @@
 </template>
 
 <script setup>
-	import { ref } from 'vue'
+	import { ref, onMounted } from 'vue'
 	import { useQuasar } from 'quasar'
+
+	import api from '../assets/plugins/api.js'
 
 	import { useProductsStore } from '../assets/plugins/ProductsStore.js'
 
@@ -184,44 +268,61 @@
 	const filter = ref('')
 
 	const columns = [
-		{
-			name: 'id',
-			label: '#',
-			align: 'center',
-			field: 'id',
-			sortable: true	
-		},
-		{
-			name: 'product_name',
-			label: 'Nombre del producto',
-			align: 'left',
-			field: 'product_name',
-			sortable: true	
-		},
-		{
-			name: 'measure',
-			label: 'Tipo de medida',
-			align: 'center',
-			field: 'measure',
-			sortable: true	
-		},
-		{
-			name: 'creation_date',
-			label: 'Fecha de creación',
-			align: 'center',
-			field: 'creation_date',
-			sortable: true	
-		},
-		{
-			name: 'actions',
-			label: 'Acciones',
-			align: 'center'
-		}
+	{
+		name: 'id',
+		label: 'ID',
+		align: 'center',
+		field: 'id',
+		sortable: true	
+	},
+	{
+		name: 'serial',
+		label: 'Serial',
+		align: 'left',
+		field: 'serial',
+		sortable: true	
+	},
+	{
+		name: 'owner',
+		label: 'Dueño',
+		align: 'left',
+		field: 'owner',
+		sortable: true	
+	},
+	{
+		name: 'connection_type',
+		label: 'Tipo de conexión',
+		align: 'left',
+		field: 'connection_type',
+		sortable: true	
+	},
+	{
+		name: 'location',
+		label: 'Ubicación',
+		align: 'left',
+		field: 'location',
+		sortable: true	
+	},
+	{
+		name: 'created_at',
+		label: 'Fecha de creación',
+		align: 'left',
+		field: 'created_at',
+		sortable: true	
+	},
+	{
+		name: 'actions',
+		label: 'Acciones',
+		align: 'center'
+	}
 	]
 
-	const products = ref(productsStore.products)
+	const products = ref([{}])
 
-	const measures = ['Una vez', 'Semanalmente', 'Diariamente', 'Raramente', 'Con frecuencia']
+	const connectionTypes = ['directa', 'semi-directa', 'indirecta']
+	const storageSystems = ['interno', 'externo']
+	const conditions = ['usado', 'nuevo']
+	const yesNot = ['yes', 'no']
 
 	const form = ref(false)
 	const confirm = ref(false)
@@ -233,9 +334,31 @@
 
 	const productsData = ref({
 		id: productsStore.products.length + 1,
-		product_name: '',
-		measure: '',
-		creation_date: ''
+		serial: null,
+		connection_type: null,
+		storage_system: null,
+		condition: null,
+		owner: null,
+		location: null,
+		manufacturer: null,
+		purchase: null,
+		i_max: null,
+		i_b: null,
+		i_n: null,
+		seals: null,
+		created_at: null,
+		updated_at: null
+	})
+
+	const readData = () => {
+		api.get().then(response => {
+			products.value = response.data.items
+		}).catch(error => console.error('Ha ocurrido un error al leer los datos: ' + error))
+	}
+
+	onMounted(() => {
+		readData()
+		resetProductsData()
 	})
 
 	const openOptions = (id) => {
@@ -248,12 +371,46 @@
 		form.value = true
 		action.value = 'editar'
 
-		let product = productsStore.products.filter((product) => product.id === id)
+		api.get("/" + id).then(response => {
+			productsData.value.id = id
+			productsData.value.serial = response.data.serial
+			productsData.value.connection_type = response.data.connection_type
+			productsData.value.storage_system = response.data.storage_system
+			productsData.value.condition = response.data.condition
+			productsData.value.owner = response.data.owner
+			productsData.value.location = response.data.location
+			productsData.value.manufacturer = response.data.manufacturer
+			productsData.value.purchase = response.data.purchase
+			productsData.value.i_max = response.data.i_max
+			productsData.value.i_b = response.data.i_b
+			productsData.value.i_n = response.data.i_n
+			productsData.value.seals = response.data.seals
+			productsData.value.created_at = response.data.created_at
+			productsData.value.updated_at = response.data.updated_at === null ? 'Sin actualizar' : response.data.updated_at
+		}).catch(error => console.error(error))
+	}
 
-		productsData.value.id = id
-		productsData.value.product_name = product[0].product_name
-		productsData.value.measure = product[0].measure
-		productsData.value.creation_date = product[0].creation_date
+	const resetProductsData = () => {
+		let date = new Date()
+		let month = (date.getMonth() + 1) > 9 ? (date.getMonth() + 1) : '0' + (date.getMonth() + 1)
+		let minute = date.getMinutes() > 9 ? date.getMinutes() : '0' + date.getMinutes()
+		let second = date.getSeconds() > 9 ? date.getSeconds() : '0' + date.getSeconds()
+
+		productsData.value.id = productsStore.products.length + 1
+		productsData.value.serial = null
+		productsData.value.connection_type = null
+		productsData.value.storage_system = null
+		productsData.value.condition = null
+		productsData.value.owner = null
+		productsData.value.location = null
+		productsData.value.manufacturer = null
+		productsData.value.purchase = null
+		productsData.value.i_max = null
+		productsData.value.i_b = null
+		productsData.value.i_n = null
+		productsData.value.seals = null
+		productsData.value.created_at = date.getFullYear() + "/" + month + "/" + date.getDate() + 'T' + date.getHours() + ':' + minute + ':' + second + '.' + date.getMilliseconds()
+		productsData.value.updated_at = null
 	}
 
 	const openCreate = () => {
@@ -282,16 +439,6 @@
 		resetProductsData()
 	}
 
-	const resetProductsData = () => {
-		let date = new Date()
-		let month = (date.getMonth() + 1) > 9 ? (date.getMonth() + 1) : '0' + (date.getMonth() + 1)
-
-		productsData.value.id = productsStore.products.length + 1
-		productsData.value.product_name = ''
-		productsData.value.measure = ''
-		productsData.value.creation_date = date.getDate() + "/" + month + "/" + date.getFullYear()
-	}
-
 	const finishAction = () => {
 		let index = productsStore.products.findIndex(product => product.id === productsData.value.id)
 		let length = productsStore.products.length
@@ -309,88 +456,107 @@
 			deleteProduct(index, length)
 			break;
 		}
-
-		//console.clear()
 	}
 
 	const createProduct = (length) => {
-		productsStore.createProduct(productsData.value)
+		api.post('', {
+			"serial": productsData.value.serial,
+			"connection_type": productsData.value.connection_type,
+			"storage_system": productsData.value.storage_system,
+			"condition": productsData.value.condition,
+			"owner": productsData.value.owner,
+			"location": productsData.value.location,
+			"manufacturer": productsData.value.manufacturer,
+			"purchase": productsData.value.purchase,
+			"i_max": Number(productsData.value.i_max),
+			"i_b": Number(productsData.value.i_b),
+			"i_n": Number(productsData.value.i_n),
+			"seals": Number(productsData.value.seals)
+		}).then(response => {
+			if (typeof response.data === 'object') {
+				$q.notify({
+					color: 'green-4',
+					textColor: 'white',
+					icon: 'check',
+					message: 'Se ha creado el producto con éxito.'
+				})
 
-		if (productsStore.products.length > length) {
-			$q.notify({
-				color: 'green-4',
-				textColor: 'white',
-				icon: 'check',
-				message: 'Se ha creado el producto con éxito.'
-			})
-
-			products.value = productsStore.products
-			closeEveryDialog()
-		}else {
-			$q.notify({
-				color: 'red-5',
-				textColor: 'white',
-				icon: 'cancel',
-				message: 'No se ha podido crear el producto nuevo.'
-			})
-		}
-	}
-
-	const updateProduct = (index, product) => {
-		let backup = [productsData.value.product_name, productsData.value.measure]
-
-		productsStore.updateProduct(index, product)
-
-		if (productsStore.products.product_name !== backup[0] && productsStore.products.product_name !== [1]) {
-			$q.notify({
-				color: 'green-4',
-				textColor: 'white',
-				icon: 'check',
-				message: 'Se ha actualizado el producto con éxito.'
-			})
-
-			products.value = productsStore.products
-
-			closeEveryDialog()
-		}else {
-			$q.notify({
-				color: 'red-5',
-				textColor: 'white',
-				icon: 'check',
-				message: 'No se ha podido actualizar el producto.'
-			})
-		}
-
-		products.value = productsStore.products
+				readData()
+				resetProductsData()
+				closeEveryDialog()
+			}else {
+				$q.notify({
+					color: 'red-5',
+					textColor: 'white',
+					icon: 'cancel',
+					message: 'No se ha podido crear el producto nuevo.'
+				})
+			}
+		}).catch(error => console.error(error))
 	}
 
 	const deleteProduct = (index, length) => {
-		productsStore.deleteProduct(index)
-		
-		if (productsStore.products.length <= length) {
-			$q.notify({
-				color: 'green-4',
-				textColor: 'white',
-				icon: 'check',
-				message: 'Se ha eliminado el producto con éxito.'
-			})
+		api.delete('/' + productsData.value.id).then(response => {
+			if (typeof response.data === 'object') {
+				$q.notify({
+					color: 'green-4',
+					textColor: 'white',
+					icon: 'check',
+					message: 'Se ha eliminado el producto con éxito.'
+				})
 
-			products.value = productsStore.products
-
-			closeEveryDialog()
-		}else {
-			$q.notify({
-				color: 'red-5',
-				textColor: 'white',
-				icon: 'cancel',
-				message: 'No se ha eliminado el producto.'
-			})
-		}
-
-		products.value = productsStore.products
+				readData()
+				resetProductsData()
+				closeEveryDialog()
+			}else {
+				$q.notify({
+					color: 'red-5',
+					textColor: 'white',
+					icon: 'cancel',
+					message: 'No se ha eliminado el producto.'
+				})
+			}
+		}).catch(error => console.error(error))
 	}
 
-	const filterPerMeasure = () => {
+	const updateProduct = (index, product) => {
+		api.patch('/' + productsData.value.id, {
+			"connection_type": productsData.value.connection_type,
+			"storage_system": productsData.value.storage_system,
+			"condition": productsData.value.condition,
+			"owner": productsData.value.owner,
+			"serial": productsData.value.serial,
+			"location": productsData.value.location,
+			"purchase": productsData.value.purchase,
+			"i_max": Number(productsData.value.i_max),
+			"i_b": Number(productsData.value.i_b),
+			"i_n": Number(productsData.value.i_n),
+			"manufacturer": productsData.value.manufacturer,
+			"serial": productsData.value.serial,
+		}).then(response => {
+			if (typeof response.data === 'object') {
+				$q.notify({
+					color: 'green-4',
+					textColor: 'white',
+					icon: 'check',
+					message: 'Se ha actualizado el producto con éxito.'
+				})
+
+				readData()
+				resetProductsData()
+				closeEveryDialog()
+			}else {
+				$q.notify({
+					color: 'red-5',
+					textColor: 'white',
+					icon: 'check',
+					message: 'No se ha podido actualizar el producto.'
+				})
+			}
+		}).catch(error => console.error(error))
+	}
+
+	/*const filterPerMeasure = () => {
 		products.value = productsStore.products
 
 		let filterMeasure = productsStore.measures
@@ -411,13 +577,14 @@
 
 			products.value = filterDate(searchDate)
 		}
-	}
+	}*/
 
 	const clearFilters = () => {
 		filter.value = null
 		measuresFilter.value = null
 		datesFilter.value = null
 
-		products.value = productsStore.products
+		readData()
+		resetProductsData()
 	}
 </script>
