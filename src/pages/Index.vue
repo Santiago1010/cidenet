@@ -49,6 +49,8 @@
 
 	const seePassword = ref(false)
 
+	console.log(crypto.SHA256('admin').toString())
+
 	sessionStorage.clear()
 
 	const login = () => {
@@ -61,7 +63,7 @@
 					message: 'Hola de nuevo, ' + username.value + '.'
 				})
 
-				sessionStore.setSession(username.value, crypto.SHA256(username.value))
+				sessionStore.setSession(username.value, crypto.SHA256(username.value).toString())
 
 				$router.push('/inicio')
 			}else {
