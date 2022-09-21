@@ -1,5 +1,5 @@
 <template>
-	<q-table title="Enerbit" :rows="products" :columns="columns" row-key="id" :filter="filter" :loading="loading">
+	<q-table title="Enerbit" :rows="productsStore.products" :columns="columns" row-key="id" :filter="filter" :loading="loading">
 
 		<template v-slot:top-right>
 			<q-input borderless debounce="300" color="primary" label="Filtrar" v-model="filter">
@@ -62,9 +62,9 @@
 						<q-tooltip>Nombre del producto.</q-tooltip>
 					</q-input>
 
-					<q-input outlined v-model="productsData.measure" label="Tipo de medida" class="q-my-md">
+					<q-select outlined v-model="productsData.measure" :options="measures" label="Tipo de medida" class="q-my-md">
 						<q-tooltip>Tipo de medida.</q-tooltip>
-					</q-input>
+					</q-select>
 
 					<q-input outlined v-model="productsData.creation_date" label="Fecha de creación" class="q-my-md" readonly>
 						<q-tooltip>Fecha de creación del producto.</q-tooltip>
@@ -110,137 +110,58 @@
 <script setup>
 	import { ref } from 'vue'
 
+	import { useProductsStore } from '../assets/plugins/ProductsStore.js'
+
+	const productsStore = useProductsStore();
+
 	const filter = ref('')
 
-	var products = [
+	var products = productsStore.products
+
+	const columns = [
 		{
-			"id": 1,
-			"product_name": "iShares 20+ Year Treasury Bond ETF",
-			"measure": "Once",
-			"creation_date": "17/04/2020"
+			name: 'id',
+			label: '#',
+			align: 'center',
+			field: 'id',
+			sortable: true	
 		},
 		{
-			"id": 2,
-			"product_name": "Nordstrom, Inc.",
-			"measure": "Weekly",
-			"creation_date": "17/11/2021"
+			name: 'product_name',
+			label: 'Nombre del producto',
+			align: 'left',
+			field: 'product_name',
+			sortable: true	
 		},
 		{
-			"id": 3,
-			"product_name": "Delta Technology Holdings Limited",
-			"measure": "Daily",
-			"creation_date": "09/06/2019"
+			name: 'measure',
+			label: 'Tipo de medida',
+			align: 'center',
+			field: 'measure',
+			sortable: true	
 		},
 		{
-			"id": 4,
-			"product_name": "Cable One, Inc.",
-			"measure": "Weekly",
-			"creation_date": "11/03/2021"
+			name: 'creation_date',
+			label: 'Fecha de creación',
+			align: 'center',
+			field: 'creation_date',
+			sortable: true	
 		},
 		{
-			"id": 5,
-			"product_name": "La Quinta Holdings Inc.",
-			"measure": "Daily",
-			"creation_date": "15/11/2021"
-		},
-		{
-			"id": 6,
-			"product_name": "MainStay DefinedTerm Municipal Opportunities Fund",
-			"measure": "Once",
-			"creation_date": "09/07/2019"
-		},
-		{
-			"id": 7,
-			"product_name": "LendingClub Corporation",
-			"measure": "Weekly",
-			"creation_date": "05/10/2019"
-		},
-		{
-			"id": 8,
-			"product_name": "Oracle Corporation",
-			"measure": "Seldom",
-			"creation_date": "10/03/2021"
-		},
-		{
-			"id": 9,
-			"product_name": "ConocoPhillips",
-			"measure": "Seldom",
-			"creation_date": "13/11/2020"
-		},
-		{
-			"id": 10,
-			"product_name": "Kulicke and Soffa Industries, Inc.",
-			"measure": "Once",
-			"creation_date": "02/06/2020"
-		},
-		{
-			"id": 11,
-			"product_name": "General Finance Corporation",
-			"measure": "Often",
-			"creation_date": "03/07/2019"
-		},
-		{
-			"id": 12,
-			"product_name": "Capital Southwest Corporation",
-			"measure": "Often",
-			"creation_date": "24/08/2022"
-		},
-		{
-			"id": 13,
-			"product_name": "Twin Disc, Incorporated",
-			"measure": "Once",
-			"creation_date": "21/08/2021"
-		},
-		{
-			"id": 14,
-			"product_name": "Communications Systems, Inc.",
-			"measure": "Weekly",
-			"creation_date": "21/03/2019"
+			name: 'actions',
+			label: 'Acciones',
+			align: 'center'
 		}
 	]
 
-	const columns = [
-	{
-		name: 'id',
-		label: '#',
-		align: 'center',
-		field: 'id',
-		sortable: true	
-	},
-	{
-		name: 'product_name',
-		label: 'Nombre del producto',
-		align: 'left',
-		field: 'product_name',
-		sortable: true	
-	},
-	{
-		name: 'measure',
-		label: 'Tipo de medida',
-		align: 'center',
-		field: 'measure',
-		sortable: true	
-	},
-	{
-		name: 'creation_date',
-		label: 'Fecha de creación',
-		align: 'center',
-		field: 'creation_date',
-		sortable: true	
-	},
-	{
-		name: 'actions',
-		label: 'Acciones',
-		align: 'center'
-	}
-	]
+	const measures = ['Una vez', 'Semanalmente', 'Diariamente', 'Raramente', 'Con frecuencia']
 
 	const form = ref(false)
 	const confirm = ref(false)
 	const action = ref('editar')
 
 	const productsData = ref({
-		id: products.length + 1,
+		id: productsStore.products.length + 1,
 		product_name: '',
 		measure: '',
 		creation_date: ''
@@ -252,14 +173,14 @@
 		form.value = true
 		action.value = 'editar'
 
-		let product = products.filter(product => product.id === id)
+		let product = products.filter((product) => product.id === id)
 
-		productsData.id = id
+		productsData.value.id = id
 		productsData.value.product_name = product[0].product_name
 		productsData.value.measure = product[0].measure
 		productsData.value.creation_date = product[0].creation_date
 
-		console.clear()
+		//console.clear()
 	}
 
 	const openCreate = () => {
@@ -285,7 +206,7 @@
 		let date = new Date()
 		let month = (date.getMonth() + 1) > 9 ? (date.getMonth() + 1) : '0' + (date.getMonth() + 1)
 
-		productsData.value.id = products.length + 1
+		productsData.value.id = productsStore.products.length + 1
 		productsData.value.product_name = ''
 		productsData.value.measure = ''
 		productsData.value.creation_date = date.getDate() + "/" + month + "/" + date.getFullYear()
@@ -294,10 +215,20 @@
 	const finishAction = () => {
 		switch (action.value) {
 			case 'crear':
-				products[products.length] = { ...productsData.value }
-				console.log(products)
+				productsStore.createProduct(productsData.value)
 				closeEveryDialog()
 				break;
+
+			case 'editar':
+				let index = products.findIndex(product => product.id === productsData.value.id)
+				productsStore.updateProduct(index, productsData.value)
+				closeEveryDialog()
+				break;
+
+			/*case 'eliminar':
+				productsData
+				closeEveryDialog()
+				break;*/
 		}
 	}
 </script>
