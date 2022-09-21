@@ -356,6 +356,6 @@
 		let newDate = datesFilter.value.split('/')
 		let searchDate = newDate[2] + "/" + newDate[1] + "/" + newDate[0]
 
-		productsData.products = productsStore.products.filter(product => product.creation_date === searchDate)
+		productsStore.products = productsStore.products.filter(product => product.creation_date === searchDate)
 	}
 </script>
