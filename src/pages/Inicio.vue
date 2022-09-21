@@ -1,5 +1,5 @@
 <template>
-	<q-table title="Enerbit" :rows="products" :columns="columns" row-key="id" :filter="filter">
+	<q-table title="Enerbit" :rows="products" :columns="columns" row-key="id" :filter="filter" :pagination="{ rowsPerPage: 50 }">
 
 		<template v-slot:top-right>
 			<q-input borderless debounce="300" color="primary" label="Filtrar" v-model="filter">
@@ -19,18 +19,23 @@
 			<q-tr>
 				<q-td colspan="100%">
 					<div class="row q-my-xs" style="width: 100%;">
-						<div class="col-12 col-sm-5 q-px-xs">
-							<q-select outlined dense v-model="measuresFilter" label="Filtrar por tipo de medida" :options="measures" @update:model-value="filterPerMeasure">
+						<div class="col-12 col-sm-2 q-px-xs">
+							<q-select outlined dense v-model="connectionsFilter" label="Filtrar por tipo de medida" :options="connectionTypes">
 								<q-tooltip>Filtrar por tipo de medida.</q-tooltip>
 							</q-select>
 						</div>
+						<div class="col-12 col-sm-2 q-px-xs">
+							<q-input outlined dense v-model="serialsFilter" label="Filtrar por serial">
+								<q-tooltip>Filtrar por serial.</q-tooltip>
+							</q-input>
+						</div>
 
-						<div class="col-12 col-sm-5 q-px-xs">
-							<q-input outlined dense v-model="datesFilter" label="Filtrar por fecha de creación" mask="date" disabled readonly>
+						<div class="col-12 col-sm-2 q-px-xs">
+							<q-input outlined dense v-model="datesFrom" label="Filtrar desde fecha de creación" mask="date" disabled readonly>
 								<template v-slot:append>
 									<q-icon name="event" class="cursor-pointer">
 										<q-popup-proxy cover transition-show="scale" transition-hide="scale">
-											<q-date v-model="datesFilter" @update:model-value="filterPerDate">
+											<q-date v-model="datesFrom" @update:model-value="filterPerDate">
 												<div class="row items-center justify-end">
 													<q-btn v-close-popup label="Cerrar" color="primary" flat />
 												</div>
@@ -42,7 +47,29 @@
 						</div>
 
 						<div class="col-12 col-sm-2 q-px-xs">
-							<q-btn color="info" label="limpiar filtros" class="btn-large" icon-rigth="backspace" @click="clearFilters">
+							<q-input outlined dense v-model="datesTo" label="Filtrar hasta fecha de creación" mask="date" disabled readonly>
+								<template v-slot:append>
+									<q-icon name="event" class="cursor-pointer">
+										<q-popup-proxy cover transition-show="scale" transition-hide="scale">
+											<q-date v-model="datesTo" @update:model-value="filterPerDate">
+												<div class="row items-center justify-end">
+													<q-btn v-close-popup label="Cerrar" color="primary" flat />
+												</div>
+											</q-date>
+										</q-popup-proxy>
+									</q-icon>
+								</template>
+							</q-input>
+						</div>
+
+						<div class="col-12 col-sm-2 q-px-xs">
+							<q-btn color="info" label="aplicar filtros" class="btn-large" @click="apllyFilters">
+								<q-tooltip>Haz click para quitar los filtros aplicados.</q-tooltip>
+							</q-btn>
+						</div>
+
+						<div class="col-12 col-sm-1 q-px-xs">
+							<q-btn color="warning" label="limpiar filtros" class="btn-large" @click="clearFilters">
 								<q-tooltip>Haz click para quitar los filtros aplicados.</q-tooltip>
 							</q-btn>
 						</div>
@@ -51,8 +78,19 @@
 			</q-tr>
 		</template>
 
+		<template v-slot:header="props">
+			<q-tr :props="props">
+				<q-th auto-width />
+				<q-th v-for="col in props.cols" :key="col.name" :props="props">{{ col.label }}</q-th>
+			</q-tr>
+		</template>
+
 		<template v-slot:body="props">
 			<q-tr>
+				<q-td auto-width>
+					<q-btn size="sm" color="accent" round dense @click="props.expand = !props.expand" :icon="props.expand ? 'remove' : 'add'" />
+				</q-td>
+
 				<q-td @click="openOptions(props.row.id)" key="id" :props="props">
 					{{ props.row.id }}
 					<q-tooltip>Haz click para editar este producto: {{ props.row.serial }}.</q-tooltip>
@@ -101,6 +139,76 @@
 					<q-btn color="negative" label="eliminar" icon-right="delete" class="q-mx-xs q-my-xs btn-large" style="display: block; position: relative;" @click="openDelete(props.row.id)">
 						<q-tooltip>Haz click para eliminar este producto: {{ props.row.serial }}.</q-tooltip>
 					</q-btn>
+				</q-td>
+			</q-tr>
+
+			<q-tr v-show="props.expand" :props="props">
+				<q-td colspan="100%">
+					<div class="row justify-center">
+						<div class="col-12 col-sm-4 col-md-3 q-py-sm q-px-xs">
+							<q-card>
+								<q-card-section class="text-center text-h4">Sistema de almacenaje:</q-card-section>
+
+								<q-card-section class="text-center text-h5">{{ props.row.storage_system }}</q-card-section>
+							</q-card>
+						</div>
+						<div class="col-12 col-sm-4 col-md-3 q-py-sm q-px-xs">
+							<q-card>
+								<q-card-section class="text-center text-h4">Condición:</q-card-section>
+
+								<q-card-section class="text-center text-h5">{{ props.row.condition }}</q-card-section>
+							</q-card>
+						</div>
+						<div class="col-12 col-sm-4 col-md-3 q-py-sm q-px-xs">
+							<q-card>
+								<q-card-section class="text-center text-h4">Fabricante:</q-card-section>
+
+								<q-card-section class="text-center text-h5">{{ props.row.manufacturer }}</q-card-section>
+							</q-card>
+						</div>
+						<div class="col-12 col-sm-4 col-md-3 q-py-sm q-px-xs">
+							<q-card>
+								<q-card-section class="text-center text-h4">Última actualización:</q-card-section>
+
+								<q-card-section class="text-center text-h5">{{ props.row.updated_at }}</q-card-section>
+							</q-card>
+						</div>
+						<div class="col-12 col-sm-4 col-md-3 q-py-sm q-px-xs">
+							<q-card>
+								<q-card-section class="text-center text-h4">i_max</q-card-section>
+
+								<q-card-section class="text-center text-h5">{{ props.row.i_max }}</q-card-section>
+							</q-card>
+						</div>
+						<div class="col-12 col-sm-4 col-md-3 q-py-sm q-px-xs">
+							<q-card>
+								<q-card-section class="text-center text-h4">i_b</q-card-section>
+
+								<q-card-section class="text-center text-h5">{{ props.row.i_b }}</q-card-section>
+							</q-card>
+						</div>
+						<div class="col-12 col-sm-4 col-md-3 q-py-sm q-px-xs">
+							<q-card>
+								<q-card-section class="text-center text-h4">i_n</q-card-section>
+
+								<q-card-section class="text-center text-h5">{{ props.row.i_n }}</q-card-section>
+							</q-card>
+						</div>
+						<div class="col-12 col-sm-4 col-md-3 q-py-sm q-px-xs">
+							<q-card>
+								<q-card-section class="text-center text-h4">Seals</q-card-section>
+
+								<q-card-section class="text-center text-h5">{{ props.row.seals }}</q-card-section>
+							</q-card>
+						</div>
+						<div class="col-12 col-sm-4 col-md-3 q-py-sm q-px-xs">
+							<q-card>
+								<q-card-section class="text-center text-h4">Fecha de compra:</q-card-section>
+
+								<q-card-section class="text-center text-h5">{{ props.row.purchase }}</q-card-section>
+							</q-card>
+						</div>
+					</div>
 				</q-td>
 			</q-tr>
 		</template> 
@@ -329,8 +437,10 @@
 	const options = ref(false)
 	const action = ref('editar')
 
-	const measuresFilter = ref(null)
-	const datesFilter = ref(null)
+	const connectionsFilter = ref(null)
+	const datesFrom = ref(null)
+	const datesTo = ref(null)
+	const serialsFilter = ref(null)
 
 	const productsData = ref({
 		id: productsStore.products.length + 1,
@@ -350,15 +460,15 @@
 		updated_at: null
 	})
 
-	const readData = () => {
+	const readData = (event) => {
 		api.get().then(response => {
 			products.value = response.data.items
 		}).catch(error => console.error('Ha ocurrido un error al leer los datos: ' + error))
 	}
 
 	onMounted(() => {
-		readData()
 		resetProductsData()
+		readData()
 	})
 
 	const openOptions = (id) => {
@@ -440,25 +550,22 @@
 	}
 
 	const finishAction = () => {
-		let index = productsStore.products.findIndex(product => product.id === productsData.value.id)
-		let length = productsStore.products.length
-
 		switch (action.value) {
 			case 'crear':
-			createProduct(length)
+			createProduct()
 			break;
 
 			case 'editar':
-			updateProduct(index, productsData.value)
+			updateProduct()
 			break;
 
 			case 'eliminar':
-			deleteProduct(index, length)
+			deleteProduct()
 			break;
 		}
 	}
 
-	const createProduct = (length) => {
+	const createProduct = () => {
 		api.post('', {
 			"serial": productsData.value.serial,
 			"connection_type": productsData.value.connection_type,
@@ -495,7 +602,7 @@
 		}).catch(error => console.error(error))
 	}
 
-	const deleteProduct = (index, length) => {
+	const deleteProduct = () => {
 		api.delete('/' + productsData.value.id).then(response => {
 			if (typeof response.data === 'object') {
 				$q.notify({
@@ -519,7 +626,7 @@
 		}).catch(error => console.error(error))
 	}
 
-	const updateProduct = (index, product) => {
+	const updateProduct = () => {
 		api.patch('/' + productsData.value.id, {
 			"connection_type": productsData.value.connection_type,
 			"storage_system": productsData.value.storage_system,
@@ -556,33 +663,31 @@
 		}).catch(error => console.error(error))
 	}
 
-	/*const filterPerMeasure = () => {
-		products.value = productsStore.products
+	const apllyFilters = () => {
+		if (connectionsFilter.value !== null) {
+			products.value = products.value.filter(product => product.connection_type === connectionsFilter.value)
+		}
 
-		let filterMeasure = productsStore.measures
+		if (datesFrom.value !== null) {
+			let from = datesFrom.value.replace('/', '-')
+			products.value = products.value.filter(product => product.created_at.split('T', 1)[0] >= from.replace('/', '-'))
+		}
 
-		if (measuresFilter.value !== null) {
-			products.value = filterMeasure(measuresFilter.value)
+		if (datesTo.value !== null) {
+			let to = datesTo.value.replace('/', '-')
+			products.value = products.value.filter(product => product.created_at.split('T', 1)[0] <= to.replace('/', '-'))
+		}
+
+		if (serialsFilter.value !== null) {
+			products.value = products.value.filter(product => product.serial === serialsFilter.value)
 		}
 	}
 
-	const filterPerDate = () => {
-		products.value = productsStore.products
-
-		let filterDate = productsStore.date
-
-		if (datesFilter.value !== null) {
-			let newDate = datesFilter.value.split('/')
-			let searchDate = newDate[2] + "/" + newDate[1] + "/" + newDate[0]
-
-			products.value = filterDate(searchDate)
-		}
-	}*/
-
 	const clearFilters = () => {
-		filter.value = null
-		measuresFilter.value = null
-		datesFilter.value = null
+		connectionsFilter.value = null
+		datesFrom.value = null
+		datesTo.value = null
+		serialsFilter.value = null
 
 		readData()
 		resetProductsData()
