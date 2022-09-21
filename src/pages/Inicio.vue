@@ -42,7 +42,7 @@
 						<q-tooltip>Haz click para editar este producto: {{ props.row.product_name }}.</q-tooltip>
 					</q-btn>
 
-					<q-btn color="negative" label="eliminar" icon-right="delete" class="q-mx-xs">
+					<q-btn color="negative" label="eliminar" icon-right="delete" class="q-mx-xs" @click="openConfirm('eliminar')">
 						<q-tooltip>Haz click para eliminar este producto: {{ props.row.product_name }}.</q-tooltip>
 					</q-btn>
 				</q-td>
@@ -58,33 +58,51 @@
 
 			<q-form>
 				<q-card-section>
-					<q-input outlined v-model="dataEdit.name" label="Nombre del producto" class="q-my-md">
+					<q-input outlined v-model="productsData.product_name" label="Nombre del producto" class="q-my-md">
 						<q-tooltip>Nombre del producto.</q-tooltip>
 					</q-input>
 
-					<q-input outlined v-model="dataEdit.measure" label="Tipo de medida" class="q-my-md">
+					<q-input outlined v-model="productsData.measure" label="Tipo de medida" class="q-my-md">
 						<q-tooltip>Tipo de medida.</q-tooltip>
 					</q-input>
 
-					<q-input outlined v-model="dataEdit.date" label="Fecha de creación" class="q-my-md" readonly>
+					<q-input outlined v-model="productsData.creation_date" label="Fecha de creación" class="q-my-md" readonly>
 						<q-tooltip>Fecha de creación del producto.</q-tooltip>
 					</q-input>
 				</q-card-section>
 
 				<q-card-actions vertical>
-					<q-btn v-if="action === 'editar'" color="positive" label="editar" class="btn-large q-my-sm" icon-right="edit">
+					<q-btn v-if="action === 'editar'" color="positive" label="editar" class="btn-large q-my-sm" icon-right="edit" @click="openConfirm(action)">
 						<q-tooltip>Haz click para editar la información de este producto.</q-tooltip>
 					</q-btn>
 
-					<q-btn v-else color="positive" label="crear" class="btn-large q-my-sm" icon-right="add">
+					<q-btn v-else color="positive" label="crear" class="btn-large q-my-sm" icon-right="add" @click="finishAction">
 						<q-tooltip>Haz click para crear este nuevo producto.</q-tooltip>
 					</q-btn>
 
-					<q-btn color="negative" label="cancelar" class="btn-large q-my-sm" icon-right="cancel" @click="form = false">
+					<q-btn color="negative" label="cancelar" class="btn-large q-my-sm" icon-right="cancel" @click="closeEveryDialog">
 						<q-tooltip>Haz click para cancelar.</q-tooltip>
 					</q-btn>
 				</q-card-actions>
 			</q-form>
+		</q-card>
+	</q-dialog>
+
+	<q-dialog v-model="confirm">
+		<q-card>
+			<q-card-section class="text-center">
+				<h2>¿Deseas {{ action }} este producto?</h2>
+			</q-card-section>
+
+			<q-card-actions vertical>
+				<q-btn color="positive" :label="'confirmo que quiero ' + action + ' este producto'" class="q-my-sm" @click="finishAction">
+					<q-tooltip>Haz click para confirmar que deseas {{ action }} este producto.</q-tooltip>
+				</q-btn>
+
+				<q-btn color="negative" :label="'no quiero ' + action + ' este producto'" class="q-my-sm" @click="closeEveryDialog">
+					<q-tooltip>Haz click para cancelar.</q-tooltip>
+				</q-btn>
+			</q-card-actions>
 		</q-card>
 	</q-dialog>
 </template>
@@ -94,7 +112,7 @@
 
 	const filter = ref('')
 
-	const products = [
+	var products = [
 		{
 			"id": 1,
 			"product_name": "iShares 20+ Year Treasury Bond ETF",
@@ -218,14 +236,15 @@
 	]
 
 	const form = ref(false)
+	const confirm = ref(false)
 	const action = ref('editar')
 
-	const dataEdit = {
-		id: 0,
-		name: '',
+	const productsData = ref({
+		id: products.length + 1,
+		product_name: '',
 		measure: '',
-		date: ''
-	}
+		creation_date: ''
+	})
 
 	const openEdit = (id) => {
 		console.clear()
@@ -235,10 +254,10 @@
 
 		let product = products.filter(product => product.id === id)
 
-		dataEdit.id = id
-		dataEdit.name = product[0].product_name
-		dataEdit.measure = product[0].measure
-		dataEdit.date = product[0].creation_date
+		productsData.id = id
+		productsData.value.product_name = product[0].product_name
+		productsData.value.measure = product[0].measure
+		productsData.value.creation_date = product[0].creation_date
 
 		console.clear()
 	}
@@ -247,12 +266,38 @@
 		form.value = true
 		action.value = 'crear'
 
+		resetProductsData()
+	}
+
+	const openConfirm = (newAction) => {
+		action.value = newAction
+		confirm.value = true
+	}
+
+	const closeEveryDialog = () => {
+		form.value = false
+		confirm.value = false
+
+		resetProductsData()
+	}
+
+	const resetProductsData = () => {
 		let date = new Date()
 		let month = (date.getMonth() + 1) > 9 ? (date.getMonth() + 1) : '0' + (date.getMonth() + 1)
 
-		dataEdit.id = 0
-		dataEdit.name = ''
-		dataEdit.measure = ''
-		dataEdit.date = date.getDate() + "/" + month + "/" + date.getFullYear()
+		productsData.value.id = products.length + 1
+		productsData.value.product_name = ''
+		productsData.value.measure = ''
+		productsData.value.creation_date = date.getDate() + "/" + month + "/" + date.getFullYear()
+	}
+
+	const finishAction = () => {
+		switch (action.value) {
+			case 'crear':
+				products[products.length] = { ...productsData.value }
+				console.log(products)
+				closeEveryDialog()
+				break;
+		}
 	}
 </script>
