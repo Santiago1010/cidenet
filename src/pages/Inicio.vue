@@ -19,13 +19,13 @@
 			<q-tr>
 				<q-td colspan="100%">
 					<div class="row q-my-xs" style="width: 100%;">
-						<div class="col-12 col-sm-6 q-px-xs">
+						<div class="col-12 col-sm-5 q-px-xs">
 							<q-select outlined dense v-model="measuresFilter" label="Filtrar por tipo de medida" :options="measures" @update:model-value="filterPerMeasure">
 								<q-tooltip>Filtrar por tipo de medida.</q-tooltip>
 							</q-select>
 						</div>
 
-						<div class="col-12 col-sm-6 q-px-xs">
+						<div class="col-12 col-sm-5 q-px-xs">
 							<q-input outlined dense v-model="datesFilter" label="Filtrar por fecha de creación" mask="date" :rules="['date']" @update:model-value="filterPerDate">
 								<template v-slot:append>
 									<q-icon name="event" class="cursor-pointer">
@@ -39,6 +39,12 @@
 									</q-icon>
 								</template>
 							</q-input>
+						</div>
+
+						<div class="col-12 col-sm-2 q-px-xs">
+							<q-btn color="info" label="limpiar filtros" class="btn-large" icon-rigth="backspace" @click="clearFilters">
+								<q-tooltip>Haz click para quitar los filtros aplicados.</q-tooltip>
+							</q-btn>
 						</div>
 					</div>
 				</q-td>
@@ -347,15 +353,26 @@
 	const filterPerMeasure = () => {
 		productsStore.products = backupComplete
 
-		productsStore.products = productsStore.products.filter(product => product.measure === measuresFilter.value)
+		if (measuresFilter.value !== null) {
+			productsStore.products = productsStore.products.filter(product => product.measure === measuresFilter.value)
+		}
 	}
 
 	const filterPerDate = () => {
 		productsStore.products = backupComplete
 
-		let newDate = datesFilter.value.split('/')
-		let searchDate = newDate[2] + "/" + newDate[1] + "/" + newDate[0]
+		if (datesFilter.value !== null) {
+			let newDate = datesFilter.value.split('/')
+			let searchDate = newDate[2] + "/" + newDate[1] + "/" + newDate[0]
 
-		productsStore.products = productsStore.products.filter(product => product.creation_date === searchDate)
+			productsStore.products = productsStore.products.filter(product => product.creation_date === searchDate)
+		}
+	}
+
+	const clearFilters = () => {
+		productsStore.products = backupComplete
+		filter.value = null
+		measuresFilter.value = null
+		datesFilter.value = null
 	}
 </script>
