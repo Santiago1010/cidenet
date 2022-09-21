@@ -34,6 +34,7 @@
 	import { useRouter } from 'vue-router'
 
 	import { useUserStore } from '../assets/plugins/UserStore.js'
+	import { useSessionsStore } from '../assets/plugins/SessionsStore.js'
 
 	import * as crypto from "crypto-js";
 
@@ -44,6 +45,7 @@
 	const password = ref(null)
 
 	const usersStore = useUserStore()
+	const sessionStore = useSessionsStore()
 
 	const seePassword = ref(false)
 
@@ -59,8 +61,7 @@
 					message: 'Hola de nuevo, ' + username.value + '.'
 				})
 
-				sessionStorage.setItem('username', username.value)
-				sessionStorage.setItem('token', crypto.SHA256(username.value))
+				sessionStore.setSession(username.value, crypto.SHA256(username.value))
 
 				$router.push('/inicio')
 			}else {
