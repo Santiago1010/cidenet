@@ -42,7 +42,7 @@
 						<q-tooltip>Haz click para editar este producto: {{ props.row.product_name }}.</q-tooltip>
 					</q-btn>
 
-					<q-btn color="negative" label="eliminar" icon-right="delete" class="q-mx-xs" @click="openConfirm('eliminar')">
+					<q-btn color="negative" label="eliminar" icon-right="delete" class="q-mx-xs" @click="openDelete(props.row.id)">
 						<q-tooltip>Haz click para eliminar este producto: {{ props.row.product_name }}.</q-tooltip>
 					</q-btn>
 				</q-td>
@@ -190,6 +190,12 @@
 		resetProductsData()
 	}
 
+	const openDelete = (id) => {
+		openConfirm('eliminar')
+
+		productsData.value.id = id
+	}
+
 	const openConfirm = (newAction) => {
 		action.value = newAction
 		confirm.value = true
@@ -213,6 +219,8 @@
 	}
 
 	const finishAction = () => {
+		let index = products.findIndex(product => product.id === productsData.value.id)
+
 		switch (action.value) {
 			case 'crear':
 				productsStore.createProduct(productsData.value)
@@ -220,15 +228,14 @@
 				break;
 
 			case 'editar':
-				let index = products.findIndex(product => product.id === productsData.value.id)
 				productsStore.updateProduct(index, productsData.value)
 				closeEveryDialog()
 				break;
 
-			/*case 'eliminar':
-				productsData
+			case 'eliminar':
+				productsStore.deleteProduct(index)
 				closeEveryDialog()
-				break;*/
+				break;
 		}
 	}
 </script>

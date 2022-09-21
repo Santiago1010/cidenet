@@ -95,6 +95,9 @@ export const useProductsStore = defineStore('ProductsStore', {
 		},
 		updateProduct(index, productUpdated) {
 			this.products[index] = { ...productUpdated }
+		},
+		deleteProduct(index) {
+			this.products.splice(index, 1)
 		}
 	}
 })
