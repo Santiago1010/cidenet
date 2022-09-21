@@ -53,22 +53,22 @@
 
 		<template v-slot:body="props">
 			<q-tr>
-				<q-td key="id" :props="props">
+				<q-td @click="openOptions(props.row.id)" key="id" :props="props">
 					{{ props.row.id }}
 					<q-tooltip>Haz click para editar este producto: {{ props.row.product_name }}.</q-tooltip>
 				</q-td>
 
-				<q-td key="product_name" :props="props">
+				<q-td @click="openOptions(props.row.id)" key="product_name" :props="props">
 					{{ props.row.product_name }}
 					<q-tooltip>Haz click para editar este producto: {{ props.row.product_name }}.</q-tooltip>
 				</q-td>
 
-				<q-td key="measure" :props="props">
+				<q-td @click="openOptions(props.row.id)" key="measure" :props="props">
 					{{ props.row.measure }}
 					<q-tooltip>Haz click para editar este producto: {{ props.row.product_name }}.</q-tooltip>
 				</q-td>
 
-				<q-td key="creation_date" :props="props">
+				<q-td @click="openOptions(props.row.id)" key="creation_date" :props="props">
 					{{ props.row.creation_date }}
 					<q-tooltip>Haz click para editar este producto: {{ props.row.product_name }}.</q-tooltip>
 				</q-td>
@@ -151,6 +151,24 @@
 			</q-card-actions>
 		</q-card>
 	</q-dialog>
+
+	<q-dialog v-model="options">
+		<q-card>
+			<q-card-section class="text-center">
+				<h4>¿Qué deseas hacer con este producto?</h4>
+			</q-card-section>
+
+			<q-card-actions vertical>
+				<q-btn color="info" label="editar este producto" icon-right="edit" class="btn-large q-my-sm" @click="openEdit(productsData.id)">
+					<q-tooltip>Haz click para editar este producto.</q-tooltip>
+				</q-btn>
+
+				<q-btn color="negative" label="eliminar este producto" icon-right="delete" class="btn-large q-my-sm" @click="openDelete(productsData.id)">
+					<q-tooltip>Haz click para eliminar este producto.</q-tooltip>
+				</q-btn>
+			</q-card-actions>
+		</q-card>
+	</q-dialog>
 </template>
 
 <script setup>
@@ -207,6 +225,7 @@
 
 	const form = ref(false)
 	const confirm = ref(false)
+	const options = ref(false)
 	const action = ref('editar')
 
 	const measuresFilter = ref(null)
@@ -218,6 +237,12 @@
 		measure: '',
 		creation_date: ''
 	})
+
+	const openOptions = (id) => {
+		productsData.value.id = id
+
+		options.value = true
+	}
 
 	const openEdit = (id) => {
 		form.value = true
@@ -252,6 +277,7 @@
 	const closeEveryDialog = () => {
 		form.value = false
 		confirm.value = false
+		options.value = false
 
 		resetProductsData()
 	}
