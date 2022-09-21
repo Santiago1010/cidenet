@@ -89,6 +89,14 @@ export const useProductsStore = defineStore('ProductsStore', {
 			}
 		]
 	}),
+	getters: {
+		date: (state) => {
+			return (date) => state.products.filter(product => product.creation_date === date)
+		},
+		measures: (state) => {
+			return (measure) => state.products.filter(product => product.measure === measure)
+		}
+	},
 	actions: {
 		createProduct(newProduct) {
 		 	this.products.push({ ...newProduct })

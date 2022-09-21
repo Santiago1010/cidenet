@@ -1,5 +1,5 @@
 <template>
-	<q-table title="Enerbit" :rows="productsStore.products" :columns="columns" row-key="id" :filter="filter" :loading="loading">
+	<q-table title="Enerbit" :rows="products" :columns="columns" row-key="id" :filter="filter">
 
 		<template v-slot:top-right>
 			<q-input borderless debounce="300" color="primary" label="Filtrar" v-model="filter">
@@ -26,13 +26,13 @@
 						</div>
 
 						<div class="col-12 col-sm-5 q-px-xs">
-							<q-input outlined dense v-model="datesFilter" label="Filtrar por fecha de creación" mask="date" :rules="['date']" @update:model-value="filterPerDate">
+							<q-input outlined dense v-model="datesFilter" label="Filtrar por fecha de creación" mask="date" disabled readonly>
 								<template v-slot:append>
 									<q-icon name="event" class="cursor-pointer">
 										<q-popup-proxy cover transition-show="scale" transition-hide="scale">
-											<q-date v-model="datesFilter">
+											<q-date v-model="datesFilter" @update:model-value="filterPerDate">
 												<div class="row items-center justify-end">
-													<q-btn v-close-popup label="Cerrar" color="primary" flat @click="filterPerDate" />
+													<q-btn v-close-popup label="Cerrar" color="primary" flat />
 												</div>
 											</q-date>
 										</q-popup-proxy>
@@ -73,12 +73,22 @@
 					<q-tooltip>Haz click para editar este producto: {{ props.row.product_name }}.</q-tooltip>
 				</q-td>
 
-				<q-td key="actions" :props="props">
+				<q-td key="actions" :props="props" style="display: block;" class="desktop-only">
 					<q-btn color="info" label="editar" icon-right="edit" class="q-mx-xs" @click="openEdit(props.row.id)">
 						<q-tooltip>Haz click para editar este producto: {{ props.row.product_name }}.</q-tooltip>
 					</q-btn>
 
 					<q-btn color="negative" label="eliminar" icon-right="delete" class="q-mx-xs" @click="openDelete(props.row.id)">
+						<q-tooltip>Haz click para eliminar este producto: {{ props.row.product_name }}.</q-tooltip>
+					</q-btn>
+				</q-td>
+
+				<q-td key="actions" :props="props" class="mobile-only">
+					<q-btn color="info" label="editar" icon-right="edit" class="q-mx-xs q-my-xs btn-large" style="display: block; position: relative;" @click="openEdit(props.row.id)">
+						<q-tooltip>Haz click para editar este producto: {{ props.row.product_name }}.</q-tooltip>
+					</q-btn>
+
+					<q-btn color="negative" label="eliminar" icon-right="delete" class="q-mx-xs q-my-xs btn-large" style="display: block; position: relative;" @click="openDelete(props.row.id)">
 						<q-tooltip>Haz click para eliminar este producto: {{ props.row.product_name }}.</q-tooltip>
 					</q-btn>
 				</q-td>
@@ -156,42 +166,42 @@
 	const filter = ref('')
 
 	const columns = [
-	{
-		name: 'id',
-		label: '#',
-		align: 'center',
-		field: 'id',
-		sortable: true	
-	},
-	{
-		name: 'product_name',
-		label: 'Nombre del producto',
-		align: 'left',
-		field: 'product_name',
-		sortable: true	
-	},
-	{
-		name: 'measure',
-		label: 'Tipo de medida',
-		align: 'center',
-		field: 'measure',
-		sortable: true	
-	},
-	{
-		name: 'creation_date',
-		label: 'Fecha de creación',
-		align: 'center',
-		field: 'creation_date',
-		sortable: true	
-	},
-	{
-		name: 'actions',
-		label: 'Acciones',
-		align: 'center'
-	}
+		{
+			name: 'id',
+			label: '#',
+			align: 'center',
+			field: 'id',
+			sortable: true	
+		},
+		{
+			name: 'product_name',
+			label: 'Nombre del producto',
+			align: 'left',
+			field: 'product_name',
+			sortable: true	
+		},
+		{
+			name: 'measure',
+			label: 'Tipo de medida',
+			align: 'center',
+			field: 'measure',
+			sortable: true	
+		},
+		{
+			name: 'creation_date',
+			label: 'Fecha de creación',
+			align: 'center',
+			field: 'creation_date',
+			sortable: true	
+		},
+		{
+			name: 'actions',
+			label: 'Acciones',
+			align: 'center'
+		}
 	]
 
-	var backupComplete = productsStore.products
+	const products = ref(productsStore.products)
 
 	const measures = ['Una vez', 'Semanalmente', 'Diariamente', 'Raramente', 'Con frecuencia']
 
@@ -274,7 +284,7 @@
 			break;
 		}
 
-		console.clear()
+		//console.clear()
 	}
 
 	const createProduct = (length) => {
@@ -288,7 +298,7 @@
 				message: 'Se ha creado el producto con éxito.'
 			})
 
-			backupComplete = productsStore.products
+			products.value = productsStore.products
 			closeEveryDialog()
 		}else {
 			$q.notify({
@@ -313,6 +323,8 @@
 				message: 'Se ha actualizado el producto con éxito.'
 			})
 
+			products.value = productsStore.products
+
 			closeEveryDialog()
 		}else {
 			$q.notify({
@@ -323,7 +335,7 @@
 			})
 		}
 
-		backupComplete = productsStore.products
+		products.value = productsStore.products
 	}
 
 	const deleteProduct = (index, length) => {
@@ -337,6 +349,8 @@
 				message: 'Se ha eliminado el producto con éxito.'
 			})
 
+			products.value = productsStore.products
+
 			closeEveryDialog()
 		}else {
 			$q.notify({
@@ -347,32 +361,37 @@
 			})
 		}
 
-		backupComplete = productsStore.products
+		products.value = productsStore.products
 	}
 
 	const filterPerMeasure = () => {
-		productsStore.products = backupComplete
+		products.value = productsStore.products
+
+		let filterMeasure = productsStore.measures
 
 		if (measuresFilter.value !== null) {
-			productsStore.products = productsStore.products.filter(product => product.measure === measuresFilter.value)
+			products.value = filterMeasure(measuresFilter.value)
 		}
 	}
 
 	const filterPerDate = () => {
-		productsStore.products = backupComplete
+		products.value = productsStore.products
+
+		let filterDate = productsStore.date
 
 		if (datesFilter.value !== null) {
 			let newDate = datesFilter.value.split('/')
 			let searchDate = newDate[2] + "/" + newDate[1] + "/" + newDate[0]
 
-			productsStore.products = productsStore.products.filter(product => product.creation_date === searchDate)
+			products.value = filterDate(searchDate)
 		}
 	}
 
 	const clearFilters = () => {
-		productsStore.products = backupComplete
 		filter.value = null
 		measuresFilter.value = null
 		datesFilter.value = null
+
+		products.value = productsStore.products
 	}
 </script>
